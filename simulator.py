@@ -155,6 +155,7 @@ if __name__ == '__main__':
      time=np.array(args.t,dtype='int')
      proportions= np.array(args.m,dtype='float')
      parental=int(args.p)
+     #Temos que verificar tamanho do cromossomo. Correspondencia entre cM e tamanho vector?
      sizeOfChromosome=1000
     
      print(parental)
