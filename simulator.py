@@ -117,7 +117,7 @@ class Population:
             listChildren[2*p].setChromosome(chr1, 2, id1)
             listChildren[2*p+1].setChromosome(chr2, 1, id2)
 
-        if len(selected) != 0:
+        if selected != []:
             index = selected[0]
 
             while index == selected[0]:
@@ -134,6 +134,8 @@ class Population:
             #Now the children become fathers
         self.Individuals = listChildren
 
+
+#Parameter example: -n 60 -r 10 -m 0.8 0.1 0.1 -t 50 19 18 -s 2 3 1 -p 3 -q 10 -c 20
 if __name__ == '__main__':
     getOpt = ap.ArgumentParser(description='Simulate migrant tracts based on Genetic Algorithm')
     getOpt.add_argument('-n', help='effective number of diploid people in initial population')
