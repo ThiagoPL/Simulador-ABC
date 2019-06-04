@@ -4,9 +4,10 @@ Created on Mon Jun  3 15:55:26 2019
 @author: Thiago
 """
 from colorama import Fore, Style
-import random
 import argparse as ap
 import numpy as np
+import random
+
 
 class Individual:
     def __init__(self, individualId, sizeOfChromosome, parental, idA, idB):
@@ -20,21 +21,21 @@ class Individual:
         print(str(self.individualId)+'\t', end='')
         for i in range(0, len(self.ChromosomeA)):
             if self.ChromosomeA[i] == 1:
-                print(Fore.BLUE+'1', end='')
+                print(Fore.BLUE+'A', end='')
             elif self.ChromosomeA[i] == 2:
-                print(Fore.RED+'2', end='')
+                print(Fore.RED+'E', end='')
             elif self.ChromosomeA[i] == 3:
-                print(Fore.GREEN+'3', end='')
+                print(Fore.GREEN+'N', end='')
             else:
                 print(Style.RESET_ALL+str(self.ChromosomeA[i]), end='')
         print("\n\t", end='')
         for i in range(0, len(self.ChromosomeB)):
             if self.ChromosomeB[i] == 1:
-                print(Fore.BLUE+'1', end='')
+                print(Fore.BLUE+'A', end='')
             elif self.ChromosomeB[i] == 2:
-                print(Fore.RED+'2', end='')
+                print(Fore.RED+'E', end='')
             elif self.ChromosomeB[i] == 3:
-                print(Fore.GREEN+'3', end='')
+                print(Fore.GREEN+'N', end='')
             else:
                 print(Style.RESET_ALL+str(self.ChromosomeB[i]), end='')
         print("")
@@ -120,7 +121,7 @@ class Population:
             index = selected[0]
 
             while index == selected[0]:
-                index = random.randrange(0, len(selected))
+                index = random.randrange(0, len(self.Individuals))
 
 
             chr1, chr2, id1, id2 = self.Individuals[selected[0]].getChromosome()
@@ -155,7 +156,7 @@ if __name__ == '__main__':
     proportions = np.array(args.m, dtype='float')
     parental = int(args.p)
     #Temos que verificar tamanho do cromossomo. Correspondencia entre cM e tamanho vector?
-    sizeOfChromosome = 200
+    sizeOfChromosome = 150
 
     print(parental)
     idA = chromosome
@@ -165,7 +166,8 @@ if __name__ == '__main__':
     population.initializePopulation(numberOfIndividuals, sizeOfChromosome, parental, idA, idB)
 
     oldest = max(time)
-    for i in range(oldest, 1, -1):
+    for i in range(oldest, 0, -1):
+        print("Geracao: "+str(i))
         proportion = 0.5
         if i in time:
             for j in range(0, len(time)):
