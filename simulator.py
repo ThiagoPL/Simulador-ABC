@@ -41,6 +41,31 @@ class Individual:
         print("")
         print(Style.RESET_ALL)
 
+    #TODO proporção ao tamanho do CHR
+    def printIndividualcM(self, sizeOfChromosome):
+        print(str(self.individualId)+'\t', end='')
+        for i in range(0, len(self.ChromosomeA)):
+            if self.ChromosomeA[i] == 1:
+                print(Fore.BLUE+'A', end='')
+            elif self.ChromosomeA[i] == 2:
+                print(Fore.RED+'E', end='')
+            elif self.ChromosomeA[i] == 3:
+                print(Fore.GREEN+'N', end='')
+            else:
+                print(Style.RESET_ALL+str(self.ChromosomeA[i]), end='')
+        print("\n\t", end='')
+        for i in range(0, len(self.ChromosomeB)):
+            if self.ChromosomeB[i] == 1:
+                print(Fore.BLUE+'A', end='')
+            elif self.ChromosomeB[i] == 2:
+                print(Fore.RED+'E', end='')
+            elif self.ChromosomeB[i] == 3:
+                print(Fore.GREEN+'N', end='')
+            else:
+                print(Style.RESET_ALL+str(self.ChromosomeB[i]), end='')
+        print("")
+        print(Style.RESET_ALL)
+
     def getChromosome(self):
 
         if self.IDchromosomeA == self.IDchromosomeB:
@@ -85,6 +110,10 @@ class Population:
     def printPopulation(self):
         for i in range(0, len(self.Individuals)):
             self.Individuals[i].printIndividual()
+
+    def printPopulationcM(self, sizeOfChromosome):
+        for i in range(0, len(self.Individuals)):
+            self.Individuals[i].printIndividualcM(sizeOfChromosome)
 
     def reproduce(self, sizeOfChromosome):
 
@@ -179,3 +208,4 @@ if __name__ == '__main__':
             population.insertPopulation(proportion, sizeOfChromosome, pop, idA, idB)
         population.reproduce(sizeOfChromosome)
     population.printPopulation()
+    population.printPopulationcM(sizeOfChromosome)
