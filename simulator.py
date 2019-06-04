@@ -5,7 +5,11 @@ Created on Mon Jun  3 15:55:26 2019
 """
 from colorama import Fore, Style
 import random
+import argparse as ap
 import numpy as np
+import os
+
+
 
 class Individual:
     def __init__(self, individualId, sizeOfChromosome, parental, idA, idB):
@@ -25,7 +29,7 @@ class Individual:
             elif(self.ChromosomeA[i] == 3):
                 print(Fore.GREEN+'3', end='')
             else:
-                print(Style.RESET_ALL+'-', end='') 
+                print(Style.RESET_ALL+str(self.ChromosomeA[i]), end='') 
         print("\n\t", end='')
         for i in range(0, len(self.ChromosomeB)):
             if(self.ChromosomeB[i] == 1):
@@ -35,7 +39,7 @@ class Individual:
             elif(self.ChromosomeB[i] == 3):
                 print(Fore.GREEN+'3', end='')
             else:
-                print(Style.RESET_ALL+'-', end='') 
+                print(Style.RESET_ALL+str(self.ChromosomeB[i]), end='') 
         print("")
         print(Style.RESET_ALL) 
     
@@ -90,13 +94,11 @@ class Population:
         for i in range(0,len(self.Individuals)):
             listChildren.append(Individual(i,sizeOfChromosome, 0, idA, idB))
         
-        
         #List of individuals
         selected=[0]*len(self.Individuals)
         
         for i in range(0, len(self.Individuals)):
             selected[i]=i
-        
         
         #Making pairs
         for p in range(len(self.Individuals) // 2):
@@ -115,11 +117,6 @@ class Population:
            
            listChildren[2*p].setChromosome(chr1,2,id1)
            listChildren[2*p+1].setChromosome(chr2,1,id2)
-
-           #print (str(i1)+" "+str(i2))
-           
-           #listChildren[2*p].printIndividual()
-           #listChildren[2*p+1].printIndividual()
            
         if(len(selected)!=0):
             index=selected[0]
@@ -134,44 +131,47 @@ class Population:
             chr1,chr2, id1, id2=self.Individuals[index].getChromosome()
             listChildren[-1].setChromosome(chr1,2,id1)
             
-            #print(str(selected)+ " "+str(index))
+            #print(str(selected)+ " "+str(index)
+            #Now the children become fathers
         self.Individuals=listChildren
-# =============================================================================
-        
-        #Substitution
-        
-        
-        
         
 if __name__ == '__main__':
+     getOpt = ap.ArgumentParser(description='Simulate migrant tracts based on Genetic Algorithm')
+     getOpt.add_argument('-n',help='effective number of diploid people in initial population')
+     getOpt.add_argument('-r',help='recombination distance, in centiMorgans')
+     getOpt.add_argument('-m',nargs='+',help='migration probabilities to be included in the population') 
+     getOpt.add_argument('-t',nargs='+',help='migrantion times ')
+     getOpt.add_argument('-s',nargs='+',help='source population labels (1- AFR, 2-EUR, 3-NAT)')
+     getOpt.add_argument('-p',help='parental population')
+     getOpt.add_argument('-q',help='number of chromosome to be simulated')
+     getOpt.add_argument('-c',help='number of chromosome')
+     args = getOpt.parse_args()
+     
+     numberOfChromosome=int(args.q)
+     chromosome=str(args.c)
+     numberOfIndividuals=int(args.n)
+     r=float(args.r)
+     sources=np.array(args.s,dtype='float')
+     time=np.array(args.t,dtype='int')
+     proportions= np.array(args.m,dtype='float')
+     parental=int(args.p)
+     sizeOfChromosome=1000
     
-    numberOfIndividuals=10
-    sizeOfChromosome=20
-    parental=3
-    
-    idA=22
-    idB=22
-    
-    #1 AFR
-    #2 EUR
-    #3 NAT
-    
-    
-    population= Population()
-    population.initializePopulation(numberOfIndividuals, sizeOfChromosome, parental, idA, idB)
-    #population.printPopulation()
-    for i in range(1,8):
-        if(i==1):
-            proportion=0.5
-            pop=1
-            population.insertPopulation(proportion, sizeOfChromosome, pop, idA, idB)
-            #population.printPopulation()
-            #print ("=========================================================================================")
-        if(i==5):
-            proportion=0.5
-            pop=2
-            population.insertPopulation(proportion, sizeOfChromosome, pop, idA, idB)
-            #population.printPopulation()
-            #print ("=========================================================================================")
-        population.reproduce(sizeOfChromosome)
-    population.printPopulation()
+     print(parental)
+     idA=chromosome
+     idB=chromosome
+  
+     population= Population()
+     population.initializePopulation(numberOfIndividuals, sizeOfChromosome, parental, idA, idB)
+     
+     oldest=max(time)
+     for i in range(oldest,1,-1):
+             proportion=0.5
+             if i in time:
+                 for j in range(0,len(time)):
+                     if(i == time[j]):
+                         proportion=proportions[j]
+                         pop=sources[j]
+                 population.insertPopulation(proportion, sizeOfChromosome, pop, idA, idB)
+             population.reproduce(sizeOfChromosome)
+     population.printPopulation()
