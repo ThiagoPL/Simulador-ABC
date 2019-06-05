@@ -17,54 +17,60 @@ class Individual:
         self.ChromosomeB = [parental]*sizeOfChromosome
         self.IDchromosomeB = idB
 
+    #Chage this verification print
     def printIndividual(self):
         print(str(self.individualId)+'\t', end='')
         for i in range(0, len(self.ChromosomeA)):
             if self.ChromosomeA[i] == 1:
-                print(Fore.BLUE+'A', end='')
+                print(Fore.BLUE+'1', end='')
             elif self.ChromosomeA[i] == 2:
-                print(Fore.RED+'E', end='')
+                print(Fore.RED+'2', end='')
             elif self.ChromosomeA[i] == 3:
-                print(Fore.GREEN+'N', end='')
+                print(Fore.GREEN+'3', end='')
             else:
                 print(Style.RESET_ALL+str(self.ChromosomeA[i]), end='')
         print("\n\t", end='')
         for i in range(0, len(self.ChromosomeB)):
             if self.ChromosomeB[i] == 1:
-                print(Fore.BLUE+'A', end='')
+                print(Fore.BLUE+'1', end='')
             elif self.ChromosomeB[i] == 2:
-                print(Fore.RED+'E', end='')
+                print(Fore.RED+'2', end='')
             elif self.ChromosomeB[i] == 3:
-                print(Fore.GREEN+'N', end='')
+                print(Fore.GREEN+'3', end='')
             else:
                 print(Style.RESET_ALL+str(self.ChromosomeB[i]), end='')
         print("")
         print(Style.RESET_ALL)
 
-    #TODO proporção ao tamanho do CHR
-    def printIndividualcM(self, sizeOfChromosome):
-        print(str(self.individualId)+'\t', end='')
-        for i in range(0, len(self.ChromosomeA)):
-            if self.ChromosomeA[i] == 1:
-                print(Fore.BLUE+'A', end='')
-            elif self.ChromosomeA[i] == 2:
-                print(Fore.RED+'E', end='')
-            elif self.ChromosomeA[i] == 3:
-                print(Fore.GREEN+'N', end='')
+    def printProportionChromosome(self, chromosome, sizeCentiMorgans, ids):
+        position = 1
+        before = chromosome[0]
+        for i in range(1, len(chromosome)):
+            if chromosome[i] == before :
+                position = position+1
             else:
-                print(Style.RESET_ALL+str(self.ChromosomeA[i]), end='')
-        print("\n\t", end='')
-        for i in range(0, len(self.ChromosomeB)):
-            if self.ChromosomeB[i] == 1:
-                print(Fore.BLUE+'A', end='')
-            elif self.ChromosomeB[i] == 2:
-                print(Fore.RED+'E', end='')
-            elif self.ChromosomeB[i] == 3:
-                print(Fore.GREEN+'N', end='')
-            else:
-                print(Style.RESET_ALL+str(self.ChromosomeB[i]), end='')
-        print("")
-        print(Style.RESET_ALL)
+                proportion = (position/len(chromosome))*sizeCentiMorgans    
+                position = 1
+                #Temporario
+                for namePop, idPop in ids.items():
+                    if idPop == before:
+                        print (namePop+"\t"+str(proportion))
+                
+                before = chromosome[i]
+        
+        proportion = (position/len(chromosome))*sizeCentiMorgans    
+        #Temporario
+        for namePop, idPop in ids.items():
+            if idPop == before:
+                print (namePop+"\t"+str(proportion))
+                
+
+    def printIndividualcM(self, sizeCentiMorgans, ids):
+        
+        self.printProportionChromosome(self.ChromosomeA,sizeCentiMorgans, ids)
+        print("=========================================================")
+        self.printProportionChromosome(self.ChromosomeB,sizeCentiMorgans, ids)
+        print("=========================================================")
 
     def getChromosome(self):
 
@@ -111,9 +117,9 @@ class Population:
         for i in range(0, len(self.Individuals)):
             self.Individuals[i].printIndividual()
 
-    def printPopulationcM(self, sizeOfChromosome):
+    def printPopulationcM(self, sizeOfChromosome, ids):
         for i in range(0, len(self.Individuals)):
-            self.Individuals[i].printIndividualcM(sizeOfChromosome)
+            self.Individuals[i].printIndividualcM(sizeOfChromosome, ids)
 
     def reproduce(self, sizeOfChromosome):
 
@@ -163,7 +169,20 @@ class Population:
             #Now the children become fathers
         self.Individuals = listChildren
 
-
+def populationToID(sources):
+    ids={}
+    idVector=[]
+    newId=0
+    for i in range(0, len(sources)):
+        if not(sources[i] in ids):
+            newId=newId+1
+            ids[sources[i]]=newId
+    print(ids)
+    for i in range(0, len(sources)):
+        idVector.append(ids.get(sources[i],0))
+    return(idVector, ids)
+    
+    
 #Parameter example: -n 60 -r 10 -m 0.8 0.1 0.1 -t 50 19 18 -s 2 3 1 -p 3 -q 10 -c 20
 if __name__ == '__main__':
     getOpt = ap.ArgumentParser(description='Simulate migrant tracts based on Genetic Algorithm')
@@ -178,18 +197,23 @@ if __name__ == '__main__':
     getOpt.add_argument('-c', help='number of chromosome')
     args = getOpt.parse_args()
 
-    numberOfChromosome = int(args.q)
-    chromosome = str(args.c)
-    numberOfIndividuals = int(args.n)
     r = float(args.r)
-    sources = np.array(args.s, dtype='float')
+    chromosome = str(args.c)
+    numberOfChromosome = int(args.q)
+    numberOfIndividuals = int(args.n)
     time = np.array(args.t, dtype='int')
     proportions = np.array(args.m, dtype='float')
-    parental = int(args.p)
-    #Temos que verificar tamanho do cromossomo. Correspondencia entre cM e tamanho vector?
-    sizeOfChromosome = 150
+    
+    #Converting String to Integer ID
+    parental = args.p
+    sources = args.s
+    sources,ids=populationToID(sources)
+    
+    #Converting the parental to ID
+    parental=ids.get(parental)    
+    
+    sizeOfChromosome = 10
 
-    print(parental)
     idA = chromosome
     idB = chromosome
 
@@ -198,7 +222,6 @@ if __name__ == '__main__':
 
     oldest = max(time)
     for i in range(oldest, 0, -1):
-        print("Geracao: "+str(i))
         proportion = 0.5
         if i in time:
             for j in range(0, len(time)):
@@ -208,4 +231,8 @@ if __name__ == '__main__':
             population.insertPopulation(proportion, sizeOfChromosome, pop, idA, idB)
         population.reproduce(sizeOfChromosome)
     population.printPopulation()
-    population.printPopulationcM(sizeOfChromosome)
+    population.printPopulationcM(r, ids)
+
+    
+    #Temos que verificar tamanho do cromossomo. Correspondencia entre cM e tamanho vector?
+   

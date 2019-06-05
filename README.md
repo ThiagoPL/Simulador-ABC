@@ -9,11 +9,29 @@ Testes realizados mostraram que o simulador utilizado previamente não fornecia 
 Nosso simulador se baseia nos operadores de AG para gerar uma população e permitir cruzamento entre os indivíduos, gerando uma opulação miscigenada
 
 
-##Ideias para implementar
+## Ideias para implementar
 Modificação para cromossomos sexuais
+
 Uso do mapa de recombinação para fazer os crossing over no nosso modelo
+
 Acasalamento preferencial baseado na ancestralidade
 
-##Decisões a serem tomadas
-Como será o output 
-Selecionaremos X indivíduos miscigenados de uma mesma corrida ou faremos corridas diferentes?
+## Decisões a serem tomadas 
+Selecionaremos W indivíduos miscigenados de uma mesma corrida ou faremos corridas diferentes?
+
+População aumentará de tamanho?
+
+Fazer classe cromossomo para indivíduo?
+
+
+## Implementados
+Getopt no modelo do multipulses
+
+Algoritmo para tamanho "fixo" implementado (ie, só cresce com migração)
+
+Conversão vetor ao final da execução -> cM
+
+Converter ID Getopt -> ID para posterior ID -> ID Getopt.
+
+## A implementar
+Corrigir esquema de cor do print da função "printIndividual"
