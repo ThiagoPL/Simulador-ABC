@@ -40,7 +40,7 @@ class Individual:
             else:
                 print(Style.RESET_ALL+str(self.ChromosomeB[i]), end='')
         print("")
-    print(Style.RESET_ALL)
+        print(Style.RESET_ALL)
 
     def printProportionChromosome(self, chromosome, sizeCentiMorgans, ids):
         position = 1
