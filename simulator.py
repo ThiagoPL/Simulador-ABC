@@ -40,7 +40,7 @@ class Individual:
             else:
                 print(Style.RESET_ALL+str(self.ChromosomeB[i]), end='')
         print("")
-        print(Style.RESET_ALL)
+    print(Style.RESET_ALL)
 
     def printProportionChromosome(self, chromosome, sizeCentiMorgans, ids):
         position = 1
@@ -52,18 +52,19 @@ class Individual:
                 proportion = (position/len(chromosome))*sizeCentiMorgans    
                 position = 1
                 #Temporario
+
                 for namePop, idPop in ids.items():
                     if idPop == before:
                         print (namePop+"\t"+str(proportion))
-                
                 before = chromosome[i]
         
         proportion = (position/len(chromosome))*sizeCentiMorgans    
-        #Temporario
         for namePop, idPop in ids.items():
             if idPop == before:
                 print (namePop+"\t"+str(proportion))
-                
+
+
+
 
     def printIndividualcM(self, sizeCentiMorgans, ids):
         
@@ -71,6 +72,7 @@ class Individual:
         print("=========================================================")
         self.printProportionChromosome(self.ChromosomeB,sizeCentiMorgans, ids)
         print("=========================================================")
+
 
     def getChromosome(self):
 
@@ -116,10 +118,10 @@ class Population:
     def printPopulation(self):
         for i in range(0, len(self.Individuals)):
             self.Individuals[i].printIndividual()
-
     def printPopulationcM(self, sizeOfChromosome, ids):
         for i in range(0, len(self.Individuals)):
             self.Individuals[i].printIndividualcM(sizeOfChromosome, ids)
+
 
     def reproduce(self, sizeOfChromosome):
 
@@ -203,7 +205,7 @@ if __name__ == '__main__':
     numberOfIndividuals = int(args.n)
     time = np.array(args.t, dtype='int')
     proportions = np.array(args.m, dtype='float')
-    
+
     #Converting String to Integer ID
     parental = args.p
     sources = args.s
@@ -213,6 +215,7 @@ if __name__ == '__main__':
     parental=ids.get(parental)    
     
     sizeOfChromosome = 10
+
 
     idA = chromosome
     idB = chromosome
@@ -231,6 +234,7 @@ if __name__ == '__main__':
             population.insertPopulation(proportion, sizeOfChromosome, pop, idA, idB)
         population.reproduce(sizeOfChromosome)
     population.printPopulation()
+
     population.printPopulationcM(r, ids)
 
     
