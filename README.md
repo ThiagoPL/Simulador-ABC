@@ -10,21 +10,24 @@ Nosso simulador se baseia nos operadores de AG para gerar uma população e perm
 
 
 ## Ideias para implementar
-Modificação para cromossomos sexuais
 
 Uso do mapa de recombinação para fazer os crossing over no nosso modelo
 
 Acasalamento preferencial baseado na ancestralidade
 
-## Decisões a serem tomadas 
+## Decisões a serem tomadas
+ 
 Selecionaremos W indivíduos miscigenados de uma mesma corrida ou faremos corridas diferentes?
-
-População aumentará de tamanho?
 
 Fazer classe cromossomo para indivíduo?
 
 
 ## Implementados
+
+Sexuais implementados
+
+Tamnho da população só crece com as chegadas
+
 Getopt no modelo do multipulses
 
 Algoritmo para tamanho "fixo" implementado (ie, só cresce com migração)

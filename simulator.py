@@ -23,7 +23,10 @@ class Individual:
         
     #Chage this verification print
     def printIndividual(self):
+        
+        print(self.ancestry)
         print(str(self.individualId)+'\t', end='')
+        print("Chromosome :", self.IDchromosomeA, end='\t')
         for i in range(0, len(self.ChromosomeA)):
             if self.ChromosomeA[i] == 1:
                 print(Fore.BLUE+'1', end='')
@@ -33,7 +36,8 @@ class Individual:
                 print(Fore.GREEN+'3', end='')
             else:
                 print(Style.RESET_ALL+str(self.ChromosomeA[i]), end='')
-        print("\n\t", end='')
+        print(Style.RESET_ALL)
+        print("\tChromosome :", self.IDchromosomeB, end='\t')
         for i in range(0, len(self.ChromosomeB)):
             if self.ChromosomeB[i] == 1:
                 print(Fore.BLUE+'1', end='')
@@ -68,11 +72,8 @@ class Individual:
                 print (namePop+"\t"+str(proportion))
 
     def printIndividualcM(self, sizeCentiMorgans, ids):
-        
-        print(self.ancestry)
         self.printProportionChromosome(self.ChromosomeA,sizeCentiMorgans, ids)
         self.printProportionChromosome(self.ChromosomeB,sizeCentiMorgans, ids)
-        print("=========================================================")
 
 
     def getChromosome(self):
@@ -144,17 +145,18 @@ class Population:
         print("We create "+str(len(self.IndividualsMen))+" men and "+str(len(self.IndividualsWomen))+" women")
         
     def insertPopulation(self, proportion, sizeOfChromosome, ancestry, idA, idB):
-        numberOfIndividuals = int(proportion*(len(self.IndividualsMen)))
-        for i in range(0, int(numberOfIndividuals/2)):
+        numberOfIndividualsM = int(proportion*(len(self.IndividualsMen)))
+        for i in range(0, int(numberOfIndividualsM)):
             self.IndividualsMen.append(Individual(len(self.IndividualsMen),
                                                sizeOfChromosome, ancestry, idA, idB, numberOfPopulations))
             self.IndividualsMen[i].calculateAncestryOfIndividuals()
             
-        numberOfIndividuals = int(proportion*(len(self.IndividualsWomen)))    
-        for i in range(0, int(numberOfIndividuals/2)):
+        numberOfIndividualsW = int(proportion*(len(self.IndividualsWomen)))    
+        for i in range(0, int(numberOfIndividualsW)):
             self.IndividualsWomen.append(Individual(len(self.IndividualsWomen),
                                                sizeOfChromosome, ancestry, idA, idA, numberOfPopulations))
             self.IndividualsWomen[i].calculateAncestryOfIndividuals()
+        print("We insert "+str(numberOfIndividualsM)+" men and "+str(numberOfIndividualsW)+" women")
 
     def printPopulation(self):
         print ("Men:")
@@ -195,10 +197,10 @@ class Population:
             
         for i in range(0, len(self.IndividualsMen)):
             selectedMen[i] = i
-
+        print("Cruzando: ")
         #Making pairs
-        for p in range(len(self.IndividualsWomen) // 2):
-            
+        for p in range(len(self.IndividualsWomen)):
+            print(p)
             #i1 is a woman
             index = random.randrange(0, len(selectedWomen))
             i1 = selectedWomen.pop(index)
@@ -206,18 +208,20 @@ class Population:
             #i2 is a man
             index = random.randrange(0, len(selectedMen))
             i2 = selectedMen.pop(index)
-
+            
+            print("Cruzando "+str(i1)+" (M) com "+str(i2)+" (H)")
+            
             #Cromosome
             chr1Woman, chr2Woman, id1Woman, id2Woman = self.IndividualsWomen[i1].getChromosome()
             chr1Man, chr2Man, id1Man, id2Man = self.IndividualsMen[i2].getChromosome()
             
-            listChildrenWomen[2*p].setChromosome(chr1Woman, 1, id1Woman)
-            listChildrenWomen[2*p].setChromosome(chr1Man, 2, id1Man)
+            listChildrenWomen[p].setChromosome(chr1Woman, 1, id1Woman)
+            listChildrenWomen[p].setChromosome(chr1Man, 2, id1Man)
                         
-            listChildrenMen[2*p+1].setChromosome(chr2Woman, 1, id2Woman)
-            listChildrenMen[2*p+1].setChromosome(chr2Man, 2, id2Man)
+            listChildrenMen[p].setChromosome(chr2Woman, 1, id2Woman)
+            listChildrenMen[p].setChromosome(chr2Man, 2, id2Man)
             
-            
+        
         self.IndividualsWomen = listChildrenWomen
         for i in range(0, len(self.IndividualsWomen)):
             self.IndividualsWomen[i].calculateAncestryOfIndividuals()
@@ -236,7 +240,7 @@ def populationToID(sources):
     for i in range(0, len(sources)):
         if not(sources[i] in ids):
             ids[sources[i]]=newId
-            number[newId]=ids
+            number[newId]=sources[i]
             newId=newId+1
     print(ids)
     for i in range(0, len(sources)):
@@ -254,7 +258,7 @@ if __name__ == '__main__':
     getOpt.add_argument('-t', nargs='+', help='migrantion times ')
     getOpt.add_argument('-s', nargs='+', help='source population labels (1- AFR, 2-EUR, 3-NAT)')
     getOpt.add_argument('-p', help='parental population')
-    getOpt.add_argument('-q', help='number of chromosome to be simulated (23 for sexual chromosome)')
+    getOpt.add_argument('-q', help='number of chromosome to be simulated (X is a valiable option)')
     getOpt.add_argument('-c', help='number of chromosome')
     args = getOpt.parse_args()
 
@@ -275,15 +279,15 @@ if __name__ == '__main__':
     
     sizeOfChromosome = 10
 
-
+    print(numberToIDs)
 
     population = Population()
     idA = chromosome
     idB = chromosome
   
     sexual=0
-    if(chromosome == 23):
-        idB=24
+    if(chromosome == "X"):
+        idB="Y"
         sexual=1        
     
     print (proportions)
@@ -293,14 +297,17 @@ if __name__ == '__main__':
 
     oldest = max(time)
     for i in range(oldest, 0, -1):
-        proportion = 0.5
+        print("Generation "+str(i))
         if i in time:
             for j in range(0, len(time)):
                 if i == time[j]:
                     proportion = proportions[j]
                     pop = sources[j]
+            print ("Inserting the pop "+str(numberToIDs[pop])+" with proportion "+str(proportion))
             population.insertPopulation(proportion, sizeOfChromosome, pop, idA, idB)
         population.reproduce(sizeOfChromosome,numberOfPopulations)
+        population.printPopulation()
+        input("Press Enter to continue...")
     population.printPopulation()
 
     population.printPopulationcM(r, idsToNumber)
