@@ -197,10 +197,10 @@ class Population:
             
         for i in range(0, len(self.IndividualsMen)):
             selectedMen[i] = i
-        print("Cruzando: ")
+        #print("Cruzando: ")
         #Making pairs
         for p in range(len(self.IndividualsWomen)):
-            print(p)
+            #print(p)
             #i1 is a woman
             index = random.randrange(0, len(selectedWomen))
             i1 = selectedWomen.pop(index)
@@ -209,7 +209,7 @@ class Population:
             index = random.randrange(0, len(selectedMen))
             i2 = selectedMen.pop(index)
             
-            print("Cruzando "+str(i1)+" (M) com "+str(i2)+" (H)")
+            #print("Cruzando "+str(i1)+" (M) com "+str(i2)+" (H)")
             
             #Cromosome
             chr1Woman, chr2Woman, id1Woman, id2Woman = self.IndividualsWomen[i1].getChromosome()
@@ -277,7 +277,7 @@ if __name__ == '__main__':
     #Converting the parental to ID
     parental=idsToNumber.get(parental)    
     
-    sizeOfChromosome = 10
+    sizeOfChromosome = 1000
 
     print(numberToIDs)
 
@@ -289,9 +289,6 @@ if __name__ == '__main__':
     if(chromosome == "X"):
         idB="Y"
         sexual=1        
-    
-    print (proportions)
-    print (sources)
     
     population.initializePopulation(numberOfIndividuals, sizeOfChromosome, parental, idA, idB, numberOfPopulations)
 
@@ -306,9 +303,9 @@ if __name__ == '__main__':
             print ("Inserting the pop "+str(numberToIDs[pop])+" with proportion "+str(proportion))
             population.insertPopulation(proportion, sizeOfChromosome, pop, idA, idB)
         population.reproduce(sizeOfChromosome,numberOfPopulations)
-        population.printPopulation()
-        input("Press Enter to continue...")
-    population.printPopulation()
+        #population.printPopulation()
+        #input("Press Enter to continue...")
+    #population.printPopulation()
 
     population.printPopulationcM(r, idsToNumber)
 
