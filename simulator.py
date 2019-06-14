@@ -50,8 +50,9 @@ class Individual:
         print("")
         print(Style.RESET_ALL)
 
-    def printProportionChromosome(self, chromosome, sizeCentiMorgans, ids):
+    def printProportionChromosome(self, chromosome, sizeCentiMorgans, ids, individual, sex, idChromosome):
         position = 1
+        string=""
         before = chromosome[0]
         for i in range(1, len(chromosome)):
             if chromosome[i] == before :
@@ -63,18 +64,25 @@ class Individual:
 
                 for namePop, idPop in ids.items():
                     if idPop == before:
-                        print (namePop+"\t"+str(proportion))
+                        string=string+namePop+"\t"+str(proportion)+"\t"+idChromosome+"\t"+str(individual)+"\t"+sex+"\n"
                 before = chromosome[i]
         
         proportion = (position/len(chromosome))*sizeCentiMorgans    
         for namePop, idPop in ids.items():
             if idPop == before:
-                print (namePop+"\t"+str(proportion))
-
-    def printIndividualcM(self, sizeCentiMorgans, ids):
-        self.printProportionChromosome(self.ChromosomeA,sizeCentiMorgans, ids)
-        self.printProportionChromosome(self.ChromosomeB,sizeCentiMorgans, ids)
-
+                string=string+namePop+"\t"+str(proportion)+"\t"+idChromosome+"\t"+str(individual)+"\t"+sex+"\n"
+                
+        return string
+    
+    def printIndividualcM(self, sizeCentiMorgans, ids, chromosome, individual, sex):
+        string=""
+        if(self.IDchromosomeA == chromosome):
+            text=self.printProportionChromosome(self.ChromosomeA,sizeCentiMorgans, ids, individual, sex, chromosome)
+            string=string+text
+        if(self.IDchromosomeB == chromosome):
+            text=self.printProportionChromosome(self.ChromosomeB,sizeCentiMorgans, ids, individual, sex, chromosome)
+            string=string+text
+        return string
 
     def getChromosome(self):
 
@@ -159,23 +167,62 @@ class Population:
         print("We insert "+str(numberOfIndividualsM)+" men and "+str(numberOfIndividualsW)+" women")
 
     def printPopulation(self):
-        print ("Men:")
+        #print ("Men:")
         for i in range(0, len(self.IndividualsMen)):
             self.IndividualsMen[i].printIndividual()
-        print ("Women:")
+        #print ("Women:")
         for i in range(0, len(self.IndividualsWomen)):
             self.IndividualsWomen[i].printIndividual()
             
-    def printPopulationcM(self, sizeOfChromosome, ids):
-        print ("Men:")
-        print (" ")
-        for i in range(0, len(self.IndividualsMen)):
-            self.IndividualsMen[i].printIndividualcM(sizeOfChromosome, ids)
-        print ("Women:")
-        print (" ")
-        for i in range(0, len(self.IndividualsWomen)):
-            self.IndividualsWomen[i].printIndividualcM(sizeOfChromosome, ids)
+    def printPopulationcM(self, sizeOfChromosome, ids, chromosome, numberOfDiploidIndividuals, numberOfMen, numberOfWomen):
+        
+        string=""
+        returnText=""
+        if(chromosome == 'X'):
+            
+            selectedWomen = [0]*len(self.IndividualsWomen)
+            selectedMen = [0]*len(self.IndividualsMen)
 
+            for i in range(0, len(self.IndividualsWomen)):
+                selectedWomen[i] = i
+            
+            for i in range(0, len(self.IndividualsMen)):
+                selectedMen[i] = i
+                    
+            for p in range(numberOfMen):
+                index = random.randrange(0, len(selectedMen))
+                i1 = selectedMen.pop(index)
+                returnText=self.IndividualsMen[i1].printIndividualcM(sizeOfChromosome, ids, chromosome, i1, "M")
+                string=string+returnText
+                
+            for p in range(numberOfWomen):
+                index = random.randrange(0, len(selectedWomen))
+                i1 = selectedWomen.pop(index)
+                returnText=self.IndividualsWomen[i1].printIndividualcM(sizeOfChromosome, ids, chromosome, i1, "W")
+                string=string+returnText
+        else:
+            print("Nao sexual") 
+            total=len(self.IndividualsMen)+len(self.IndividualsWomen)
+            selected=[0]*(total)
+            for i in range(0, len(selected)):
+                selected[i] = i
+            for p in range(numberOfDiploidIndividuals):
+                index = random.randrange(0, len(selected))
+                i1 = selected.pop(index)
+                
+                if(i1 < len(self.IndividualsMen)):
+                    returnText=self.IndividualsMen[i1].printIndividualcM(sizeOfChromosome, ids, chromosome, i1, "M")    
+                    #print("Imprimindo o individuo (M)"+str(i1))
+                    #print(returnText)
+                    string=string+returnText
+                else:
+                    idW=i1-len(self.IndividualsMen)
+                    returnText=self.IndividualsWomen[idW].printIndividualcM(sizeOfChromosome, ids, chromosome, i1, "W")
+                    #print("Imprimindo o individuo (W)"+str(i1))
+                    #print(returnText)
+                    string=string+returnText
+            
+        return string;
     def reproduce(self, sizeOfChromosome, numberOfPopulations):
 
         #Setting the children
@@ -231,7 +278,7 @@ class Population:
             self.IndividualsMen[i].calculateAncestryOfIndividuals()
         #Updating the ancestries
         
-
+# n 500 -r 1 -m 0.8 0.1 0.1 0.1 0.1 0.1 0.1 0.5 0.1 -t 20 19 18 14 13 12 8 7 6 -s EUR NAT AFR AFR EUR NAT NAT AFR EUR -p NAT -q 50 -c 22 -o output
 def populationToID(sources):
     ids={}
     number={}
@@ -248,7 +295,7 @@ def populationToID(sources):
     return(idVector, ids, number,newId)
     
     
-#Parameter example: -n 60 -r 10 -m 0.8 0.1 0.1 -t 50 19 18 -s 2 3 1 -p 3 -q 10 -c 20
+
 if __name__ == '__main__':
     getOpt = ap.ArgumentParser(description='Simulate migrant tracts based on Genetic Algorithm')
     getOpt.add_argument('-n', help='effective number of diploid people in initial population')
@@ -258,17 +305,30 @@ if __name__ == '__main__':
     getOpt.add_argument('-t', nargs='+', help='migrantion times ')
     getOpt.add_argument('-s', nargs='+', help='source population labels (1- AFR, 2-EUR, 3-NAT)')
     getOpt.add_argument('-p', help='parental population')
-    getOpt.add_argument('-q', help='number of chromosome to be simulated (X is a valiable option)')
-    getOpt.add_argument('-c', help='number of chromosome')
+    getOpt.add_argument('-o', help='output file name')
+    getOpt.add_argument('-q', help='number of individuals (diploid) to be outputed ')
+    getOpt.add_argument('-c', help='chromosome to be simulated (sexual chromosome (X) is implemented)')
+    getOpt.add_argument('-y', help='Number of X-men to be outputed (chromosome X only)')
+    getOpt.add_argument('-x', help='Number of X-women to be outputed (chromosome X only)')
     args = getOpt.parse_args()
 
     r = float(args.r)
-    chromosome = str(args.c)
-    numberOfChromosome = int(args.q)
+    output = str(args.o)
+    numberOfDiploidIndividuals = int(args.q)
     numberOfIndividuals = int(args.n)
     time = np.array(args.t, dtype='int')
     proportions = np.array(args.m, dtype='float')
-
+    
+    #Chromosome
+    chromosome = str(args.c)
+    numberOfMen= -1
+    numberOfWomen= -1
+    if(chromosome == "X"):
+        idB="Y"
+        sexual=1        
+        numberOfMen= int(args.y)
+        numberOfWomen= int(args.x)
+        
     #Converting String to Integer ID
     parental = args.p
     sources = args.s
@@ -277,18 +337,13 @@ if __name__ == '__main__':
     #Converting the parental to ID
     parental=idsToNumber.get(parental)    
     
-    sizeOfChromosome = 1000
-
-    print(numberToIDs)
+    sizeOfChromosome = 2000
 
     population = Population()
     idA = chromosome
     idB = chromosome
   
     sexual=0
-    if(chromosome == "X"):
-        idB="Y"
-        sexual=1        
     
     population.initializePopulation(numberOfIndividuals, sizeOfChromosome, parental, idA, idB, numberOfPopulations)
 
@@ -306,9 +361,9 @@ if __name__ == '__main__':
         #population.printPopulation()
         #input("Press Enter to continue...")
     #population.printPopulation()
-
-    population.printPopulationcM(r, idsToNumber)
-
+    outputFile=open(output, 'w')
+    outputFile.write(population.printPopulationcM(r, idsToNumber,chromosome, numberOfDiploidIndividuals, numberOfMen, numberOfWomen))
+    outputFile.close()
     
     #Temos que verificar tamanho do cromossomo. Correspondencia entre cM e tamanho vector?
    
