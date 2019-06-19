@@ -9,7 +9,7 @@ Testes realizados mostraram que o simulador utilizado previamente não fornecia 
 Nosso simulador se baseia nos operadores de AG para gerar uma população e permitir cruzamento entre os indivíduos, gerando uma opulação miscigenada
 
 
-## Ideias para implementar
+## Ideias para implementar depois
 
 Uso do mapa de recombinação para fazer os crossing over no nosso modelo
 
